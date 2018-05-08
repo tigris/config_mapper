@@ -340,6 +340,11 @@ describe ConfigMapper::ConfigStruct do
         attribute :home_team
       end
 
+      it "is empty if you don't use the deprecated method" do
+        target.home_team = "Brisbane Lions"
+        expect(target.config_warnings).to be_empty
+      end
+
       it "includes the deprecation message in the warning" do
         target.home = "Adelaide Crows"
         expect(target.config_warnings).to include(".home" => "is deprecated (renamed to .home_team)")
