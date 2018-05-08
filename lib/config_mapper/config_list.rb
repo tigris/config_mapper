@@ -49,6 +49,18 @@ module ConfigMapper
       end
     end
 
+    def config_warnings
+      {}.tap do |warnings|
+        each_with_index do |element, index|
+          next unless element.respond_to?(:config_warnings)
+          prefix = "[#{index}]"
+          element.config_warnings.each do |path, path_warnings|
+            warnings["#{prefix}#{path}"] = path_warnings
+          end
+        end
+      end
+    end
+
     def config_errors
       {}.tap do |errors|
         each_with_index do |element, index|

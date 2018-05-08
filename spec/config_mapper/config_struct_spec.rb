@@ -304,6 +304,22 @@ describe ConfigMapper::ConfigStruct do
 
   end
 
+  describe "#config_warnings" do
+
+    with_target_class do
+      attribute :time
+      component :beer do
+        attribute :name
+        attribute :rating
+      end
+    end
+
+    it "does nothing yet" do
+      expect(target.config_warnings).to be_empty
+    end
+
+  end
+
   describe "#configure_with" do
 
     with_target_class do

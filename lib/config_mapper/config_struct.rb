@@ -152,6 +152,10 @@ module ConfigMapper
       immediate_config_errors.merge(component_config_errors)
     end
 
+    def config_warnings
+      component_config_warnings
+    end
+
     # Configure with data.
     #
     # @param attribute_values [Hash] attribute values
@@ -204,6 +208,17 @@ module ConfigMapper
         self.class.each_attribute do |a|
           if a.required && instance_variable_get("@#{a.name}").nil?
             errors[".#{a.name}"] = NoValueProvided.new
+          end
+        end
+      end
+    end
+
+    def component_config_warnings
+      {}.tap do |warnings|
+        components.each do |component_path, component_value|
+          next unless component_value.respond_to?(:config_warnings)
+          component_value.config_warnings.each do |path, value|
+            warnings["#{component_path}#{path}"] = value
           end
         end
       end

@@ -50,6 +50,18 @@ module ConfigMapper
       end
     end
 
+    def config_warnings
+      {}.tap do |warnings|
+        each do |key, value|
+          prefix = "[#{key.inspect}]"
+          next unless value.respond_to?(:config_warnings)
+          value.config_warnings.each do |path, path_warnings|
+            warnings["#{prefix}#{path}"] = path_warnings
+          end
+        end
+      end
+    end
+
     def config_errors
       {}.tap do |errors|
         each do |key, value|
