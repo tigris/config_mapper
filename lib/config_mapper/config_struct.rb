@@ -40,7 +40,7 @@ module ConfigMapper
 
         attribute = attribute!(name)
         attribute.description = description
-        attribute.deprecated  = deprecated
+        attribute.deprecated = deprecated
 
         if default == :no_default
           attribute.required = true
