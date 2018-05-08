@@ -311,11 +311,27 @@ describe ConfigMapper::ConfigStruct do
       component :beer do
         attribute :name
         attribute :rating
+
+        def config_warnings
+          super.tap do |warnings|
+            warnings[".rating"] = "you need to drink better beer" if self.rating <= 3
+          end
+        end
       end
     end
 
-    it "does nothing yet" do
-      expect(target.config_warnings).to be_empty
+    context "when no warnings activate" do
+      it "is empty" do
+        target.beer.rating = 4
+        expect(target.config_warnings).to be_empty
+      end
+    end
+
+    context "when there should be warnings" do
+      it "includes the output of component warnings" do
+        target.beer.rating = 2
+        expect(target.config_warnings).to include(".beer.rating" => "you need to drink better beer")
+      end
     end
 
   end
