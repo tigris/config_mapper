@@ -352,6 +352,29 @@ describe ConfigMapper::ConfigStruct do
 
     end
 
+    context "with component_dict deprecations" do
+
+      with_target_class do
+        component :computer do
+          attribute :processor
+        end
+        component :pc, deprecated: true do
+          attribute :cpu
+        end
+      end
+
+      it "is empty if you don't use the deprecated component" do
+        target.computer.processor = "Intel"
+        expect(target.config_warnings).to be_empty
+      end
+
+      it "includes the deprecation message in the warning" do
+        target.pc.cpu = "Celeron"
+        expect(target.config_warnings).to include(".pc" => "is deprecated")
+      end
+
+    end
+
   end
 
   describe "#configure_with" do

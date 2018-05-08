@@ -69,9 +69,10 @@ module ConfigMapper
       # @param name [Symbol] component name
       # @param type [Class] component base-class
       #
-      def component(name, type: ConfigStruct, description: nil, &block)
+      def component(name, type: ConfigStruct, description: nil, deprecated: nil, &block)
         type = Class.new(type, &block) if block
         attribute = attribute!(name)
+        attribute.deprecated = deprecated
         attribute.description = description
         attribute.factory = type
       end
@@ -85,9 +86,9 @@ module ConfigMapper
       # @param type [Class] base-class for component values
       # @param key_type [Proc] function used to validate keys
       #
-      def component_dict(name, type: ConfigStruct, key_type: nil, description: nil, &block)
+      def component_dict(name, type: ConfigStruct, key_type: nil, description: nil, deprecated: nil, &block)
         type = Class.new(type, &block) if block
-        component(name, type: ConfigDict::Factory.new(type, key_type), description: description)
+        component(name, type: ConfigDict::Factory.new(type, key_type), description: description, deprecated: deprecated)
       end
 
       # Defines an array of sub-components.
@@ -98,9 +99,9 @@ module ConfigMapper
       # @param name [Symbol] list attribute name
       # @param type [Class] base-class for component values
       #
-      def component_list(name, type: ConfigStruct, description: nil, &block)
+      def component_list(name, type: ConfigStruct, description: nil, deprecated: nil, &block)
         type = Class.new(type, &block) if block
-        component(name, type: ConfigList::Factory.new(type), description: description)
+        component(name, type: ConfigList::Factory.new(type), description: description, deprecated: deprecated)
       end
 
       # Generate documentation, as Ruby data.
