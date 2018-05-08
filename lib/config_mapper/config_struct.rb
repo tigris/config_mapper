@@ -217,7 +217,7 @@ module ConfigMapper
     def attribute_config_warnings
       {}.tap do |warnings|
         self.class.each_attribute do |a|
-          if a.deprecated
+          if a.deprecated && !instance_variable_get("@#{a.name}").nil?
             msg = "is deprecated"
             msg += " (#{a.deprecated})" if a.deprecated.is_a?(String)
             warnings[".#{a.name}"] = msg
