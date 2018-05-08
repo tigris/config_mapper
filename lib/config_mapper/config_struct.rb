@@ -36,10 +36,11 @@ module ConfigMapper
       # @param default default value
       # @yield type-coercion block
       #
-      def attribute(name, type = nil, default: :no_default, description: nil, &type_block)
+      def attribute(name, type = nil, default: :no_default, description: nil, deprecated: nil, &type_block)
 
         attribute = attribute!(name)
         attribute.description = description
+        attribute.deprecated  = deprecated
 
         if default == :no_default
           attribute.required = true
@@ -153,7 +154,7 @@ module ConfigMapper
     end
 
     def config_warnings
-      component_config_warnings
+      component_config_warnings.merge(attribute_config_warnings)
     end
 
     # Configure with data.
@@ -213,6 +214,18 @@ module ConfigMapper
       end
     end
 
+    def attribute_config_warnings
+      {}.tap do |warnings|
+        self.class.each_attribute do |a|
+          if a.deprecated
+            msg = "is deprecated"
+            msg += " (#{a.deprecated})" if a.deprecated.is_a?(String)
+            warnings[".#{a.name}"] = msg
+          end
+        end
+      end
+    end
+
     def component_config_warnings
       {}.tap do |warnings|
         components.each do |component_path, component_value|
@@ -243,6 +256,7 @@ module ConfigMapper
 
       attr_reader :name
 
+      attr_accessor :deprecated
       attr_accessor :description
       attr_accessor :factory
       attr_accessor :validator

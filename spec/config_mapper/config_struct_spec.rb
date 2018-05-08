@@ -307,7 +307,6 @@ describe ConfigMapper::ConfigStruct do
   describe "#config_warnings" do
 
     with_target_class do
-      attribute :time
       component :beer do
         attribute :name
         attribute :rating
@@ -332,6 +331,20 @@ describe ConfigMapper::ConfigStruct do
         target.beer.rating = 2
         expect(target.config_warnings).to include(".beer.rating" => "you need to drink better beer")
       end
+    end
+
+    context "with attribute deprecations" do
+
+      with_target_class do
+        attribute :home, deprecated: "renamed to .home_team"
+        attribute :home_team
+      end
+
+      it "includes the deprecation message in the warning" do
+        target.home = "Adelaide Crows"
+        expect(target.config_warnings).to include(".home" => "is deprecated (renamed to .home_team)")
+      end
+
     end
 
   end
